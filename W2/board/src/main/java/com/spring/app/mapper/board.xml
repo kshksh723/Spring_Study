@@ -109,10 +109,60 @@
 			where userid =  #{userid}
 		</update>
 		
+		
+	<!-- 	// tbl_loginhistory 테이블에 로그인 기록 입력하기  -->
+	<insert id="insert_tbl_loginhistory" parameterType="HashMap">
+		insert into tbl_loginhistory(historyno, fk_userid, logindate, clientip)
+		values(seq_historyno.nextval, #{userid}, default, #{clientip})
+	
+	
+	</insert>
+		
+		
 		<!-- #57. 파일첨부가 없는 글쓰기  -->
 		<insert id="add" parameterType="BoardVO">
 		insert into tbl_board(seq, fk_userid, name, subject, content, pw, readCount, regDate, status)
 		values(boardSeq.nextval, #{fk_userid}, #{name}, #{subject}, #{content}, #{pw}, default, default, default) 
 		</insert>
+	
+	
+	<!--  #61. 페이징 처리를 안한 검색어가 없는 전체 글목록 보여주기  -->
+	<select id="boardListNoSearch" resultType="BoardVO">
+	
+	select seq, fk_userid, name, subject
+           , readCount, to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') AS regDate
+	from tbl_board
+	where status = 1
+	order by seq desc
+	</select>
+	
+	<!-- 	//#65. 글 1개 조회하기  -->
+	<select id="getView" parameterType="HashMap" resultType="BoardVO">
+		
+		 SELECT  previousseq, previoussubject
+				   ,seq, fk_userid, name, subject, content, readCount,regDate,pw
+				   ,nextseq, nextsubject 
+				   
+		    FROM 
+		    (
+		      select lag(seq) over(order by seq desc) AS previousseq
+		           , lag(subject,1) over(order by seq desc) AS previoussubject
+		           , seq, fk_userid, name, subject, content, readCount
+		           , to_char(regDate, 'yyyy-mm-dd hh24:mi:ss') AS regDate, pw
+		           , lead(seq) over(order by seq desc) AS nextseq
+		           , lead(subject, 1) over(order by seq desc) AS nextsubject 
+		     from tbl_board
+		     where status = 1
+	    ) V
+	    WHERE V.seq = #{seq}
+	
+	</select>
+	
+<!-- 	//#66. 글 조회수 1증가하기  -->
+<update id="increase_readCount" parameterType="String">
+	update tbl_board set readCount = readCount + 1
+	where seq = #{seq}
+</update>	
+	
 	
 </mapper>

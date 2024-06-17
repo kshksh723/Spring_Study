@@ -42,13 +42,31 @@ public interface BoardDAO {
 	// 휴면 계정 update?
 	void updateIdle(String userid);
 
+	
+	
+	// tbl_loginhistory 테이블에 로그인 기록 입력하기 
+	void insert_tbl_loginhistory(Map<String, String> paraMap);
+
+
+
+	
+	
+	
 	// 파일첨부가 없는 글쓰기 
 	int add(BoardVO boardvo);
 
+	
+	//  페이징 처리를 안한 검색어가 없는 전체 글목록 보여주기
+	List<BoardVO> boardListNoSearch();
 
+	////글 1개 조회하기 
+	BoardVO getView(Map<String, String> paraMap);
 
+	// 글 조회수 1증가하기 
+	int increase_readCount(String seq);
 	
 	
+
 	
 	
 }

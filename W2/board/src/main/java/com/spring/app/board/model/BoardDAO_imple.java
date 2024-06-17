@@ -179,6 +179,19 @@ public class BoardDAO_imple implements BoardDAO {
 	} // end of public void updateIdle(String userid)
 
 
+
+	// tbl_loginhistory 테이블에 로그인 기록 입력하기 
+	@Override
+	public void insert_tbl_loginhistory(Map<String, String> paraMap) {
+		sqlsession.insert("board.insert_tbl_loginhistory", paraMap );
+
+
+	}   
+
+
+
+
+
 	// #56. 파일 첨부가 없는 글쓰기 
 	@Override
 	public int add(BoardVO boardvo) {
@@ -187,6 +200,43 @@ public class BoardDAO_imple implements BoardDAO {
 
 		return n;
 	} // end of public int add(BoardVO boardvo)
+
+
+	
+	// #60. 페이징 처리를 안한 검색어가 없는 전체 글목록 보여주기 
+	@Override
+	public List<BoardVO> boardListNoSearch() {
+		
+		List<BoardVO> boardList = sqlsession.selectList("board.boardListNoSearch");
+		
+		return boardList;
+	}
+
+
+	//#64. 글 1개 조회하기 
+	@Override
+	public BoardVO getView(Map<String, String> paraMap) {
+		
+		BoardVO boardvo = sqlsession.selectOne("board.getView", paraMap);
+		
+		return boardvo;
+	} // end of public BoardVO getView(Map<String, String> paraMap)
+
+
+	//#66. 글 조회수 1증가하기 
+	@Override
+	public int increase_readCount(String seq) {
+		
+		int n = sqlsession.update("board.increase_readCount", seq);
+				
+				
+				
+				
+		
+		return n;
+	} // end of public int increase_readCount(String seq) 
+
+
 
 
 
